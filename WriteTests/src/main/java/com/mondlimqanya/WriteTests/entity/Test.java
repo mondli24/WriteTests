@@ -3,7 +3,7 @@ package com.mondlimqanya.WriteTests.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +19,29 @@ public class Test {
     private Long testId;
 
     private String testName;
-    private int duration;
+    private Long duration;
 
     @Column(nullable = false)
     private LocalDate dateSchedule;
 
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
-    private List<Question> questions = new ArrayList<>();  // Initialize with an empty list
+    private List<Question> questions = new ArrayList<>();
 
-    // Getters and Setters
+    @ManyToOne
+    @JoinColumn(name = "lecturer_id", nullable = false)
+    private Lecturer lecturer;
+
+    public void setDuration(Duration duration) {
+        this.duration = duration.toMinutes();
+    }
+
+
+    public Duration getDurationAsDuration() {
+        return Duration.ofMinutes(duration);
+    }
+    public Long getLecturerId() {
+        return lecturer != null ? lecturer.getLecturerId() : null;
+    }
 
 }

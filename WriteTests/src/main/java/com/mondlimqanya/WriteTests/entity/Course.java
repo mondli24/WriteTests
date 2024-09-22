@@ -14,14 +14,14 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Lecturer lecturer;
 
     // Constructors
     public Course() {}
 
-    public Course(String courseName, User user) {
+    public Course(String courseName, Lecturer lecturer) {
         this.courseName = courseName;
-        this.user = user;
+        this.lecturer = lecturer;
     }
 
     // Getters and Setters
@@ -41,11 +41,11 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public User getUser() {
-        return user;
+    public Lecturer getUser() {
+        return lecturer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Lecturer lecturer) {
+        this.lecturer = lecturer;
     }
 }

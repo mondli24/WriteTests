@@ -12,6 +12,7 @@ public class QuestionDTO {
     // Getters and Setters
     private String questionText;
     private String questionType;
+    private Boolean correctAnswer;
     private List<AnswerDTO> answers = new ArrayList<>();  // Initialize answers with an empty list
     public QuestionDTO() {}
 
