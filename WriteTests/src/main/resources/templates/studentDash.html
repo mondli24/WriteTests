@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/studentDash.css}">
+</head>
+<body>
+<header>
+    <h1>Student Dashboard</h1>
+    <button class="logout-btn">Logout</button>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Take Test</a></li>
+        <li><a href="#">View Grades</a></li>
+        <li><a href="#">Profile</a></li>
+    </ul>
+</nav>
+
+<main>
+    <section class="welcome-section">
+        <h2>Welcome, [Student Name]</h2>
+        <p>Here’s a summary of your upcoming tests and recent grades.</p>
+    </section>
+
+    <section class="upcoming-tests">
+        <h3>Upcoming Tests</h3>
+        <ul>
+            <li>Test 1 - Date: 2024-09-01, Time: 10:00 AM</li>
+            <li>Test 2 - Date: 2024-09-15, Time: 2:00 PM</li>
+        </ul>
+    </section>
+
+    <section class="recent-grades">
+        <h3>Recent Grades</h3>
+        <ul>
+            <li>Test 1 - Grade: A</li>
+            <li>Test 2 - Grade: B+</li>
+        </ul>
+    </section>
+
+    <section class="test-history">
+        <h3>Test History</h3>
+        <ul>
+            <li>Test 1 - Completed on 2024-09-01</li>
+            <li>Test 2 - Completed on 2024-09-15</li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <p>Help | Contact</p>
+</footer>
+</body>
+</html>

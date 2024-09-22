@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Student</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<h2>Add a New Student</h2>
+<form th:action="@{/add-student}" th:object="${student}" method="post">
+    <div>
+        <label>First Name:</label>
+        <input type="text" th:field="*{firstName}" />
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+    </div>
+    <div>
+        <label>Last Name:</label>
+        <input type="text" th:field="*{lastName}" />
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+    </div>
+    <div>
+        <label>Email Address:</label>
+        <input type="email" th:field="*{emailAddress}" />
+        <div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"></div>
+    </div>
+    <div>
+        <label>Phone:</label>
+        <input type="text" th:field="*{phone}" />
+        <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+    </div>
+    <div>
+        <button type="submit">Add Student</button>
+    </div>
+    <div th:if="${error}">
+        <p th:text="${error}"></p>
+    </div>
+</form>
+</body>
+</html>

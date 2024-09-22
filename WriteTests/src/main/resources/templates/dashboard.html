@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<header>
+    <h1>Lecturer Dashboard</h1>
+    <button class="logout-btn">Logout</button>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a th:href="@{/tests/create}" class="btn">Create Test</a></li>
+        <li><a href="#">View Tests</a></li>
+        <li><a href="#">Grades</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a th:href="@{/add-student}">Add Student</a></li>
+    </ul>
+</nav>
+
+<main>
+    <section class="welcome-section">
+        <h2>Welcome, [Lecturer Name]</h2>
+        <p>Quick overview of upcoming tests and pending grading tasks.</p>
+    </section>
+
+    <section class="upcoming-tests">
+        <h3>Upcoming Tests</h3>
+        <ul>
+            <li>Test 1 - Date: 2024-09-01, Time: 10:00 AM, Students Enrolled: 25</li>
+            <li>Test 2 - Date: 2024-09-15, Time: 2:00 PM, Students Enrolled: 30</li>
+        </ul>
+    </section>
+
+    <section class="recent-activity">
+        <h3>Recent Activity</h3>
+        <ul>
+            <li>Student Submission for Test 1 - Pending Grading</li>
+            <li>Student Submission for Test 2 - Pending Grading</li>
+        </ul>
+    </section>
+
+    <section class="grade-overview">
+        <h3>Recent Grades</h3>
+        <ul>
+            <li>Test 1 - Graded: 25 Students</li>
+            <li>Test 2 - Graded: 30 Students</li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <p>Help | Contact</p>
+</footer>
+</body>
+</html>
