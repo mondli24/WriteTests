@@ -12,6 +12,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+@Getter
+@Setter
 @Entity
 @Table(name = "students")
 public class Student {
@@ -45,6 +50,10 @@ public class Student {
     @Setter
     @Getter
     private String password;
+
+    // A student can enroll in multiple courses
+    @ManyToMany(mappedBy = "students")
+    private Set<Course> courses = new HashSet<>();
 
     // Constructors
     public Student() {}

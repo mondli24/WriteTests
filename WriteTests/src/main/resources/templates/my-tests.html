@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Tests</title>
+    <link rel="stylesheet" th:href="@{/css/my-tests.css}">
+</head>
+<body>
+<h1>Your Created Tests</h1>
+<a th:href="@{/dashboard}" class="back-button">Back to Dashboard</a>
+<table>
+    <thead>
+    <tr>
+        <th>Test Name</th>
+        <th>Scheduled Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="test : ${tests}">
+        <td th:text="${test.testName}"></td>
+        <td th:text="${test.dateSchedule}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

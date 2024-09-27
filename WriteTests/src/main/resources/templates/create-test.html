@@ -7,6 +7,8 @@
 </head>
 <body>
 <form th:action="@{/tests/create}" th:object="${testDTO}" method="post">
+    <input type="hidden" th:value="${courseId}" name="courseId"/> <!-- Hidden field for courseId -->
+
     <div>
         <label for="testName">Test Name:</label>
         <input type="text" id="testName" th:field="*{testName}" required>
@@ -29,15 +31,9 @@
 
     <button type="button" onclick="addQuestion()">Add Question</button>
     <button type="submit">Create Test</button>
+    <a th:href="@{/dashboard}"  class="logout-btn">Done</a>
 </form>
 </body>
-
-
-<script>
-    // Set the minimum date to today
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    document.getElementById("dateSchedule").setAttribute("min", today);
-</script>
 <script>
     // Set the minimum date to today
     const today = new Date().toISOString().split('T')[0];

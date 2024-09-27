@@ -1,0 +1,47 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.test-result-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.test-completion-status, .test-score {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.score, .total {
+    font-weight: bold;
+    color: #007BFF; /* Bootstrap's primary color for consistency */
+}
+
+.review-form {
+    margin-top: 20px;
+}
+
+.review-button {
+    background-color: #007BFF; /* Bootstrap's primary color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.review-button:hover {
+    background-color: #0056b3;
+}

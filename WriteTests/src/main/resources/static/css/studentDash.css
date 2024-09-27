@@ -1,78 +1,112 @@
+/* General styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f0f2f5;
+    color: #333;
 }
 
 header {
-    background-color: #4CAF50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
     color: white;
-    padding: 10px 20px;
-    text-align: center;
-    position: relative;
+    padding: 20px;
 }
 
-.logout-btn {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    background-color: #ff4c4c;
-    border: none;
+header h1 {
+    margin: 0;
+}
+
+.logout-button {
+    background-color: #dc3545;
     color: white;
-    padding: 8px 16px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
+    text-decoration: none;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
 }
 
 nav {
-    background-color: #333;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 nav ul {
     list-style-type: none;
+    padding: 10px;
     margin: 0;
-    padding: 0;
-    overflow: hidden;
+    display: flex;
+    justify-content: space-around;
 }
 
-nav ul li {
-    float: left;
+nav a {
+    text-decoration: none;
+    color: #007bff;
+    padding: 10px 15px;
+    border-radius: 5px;
 }
 
-nav ul li a {
-    display: block;
-    color: white;
+nav a:hover {
+    background-color: #e9ecef;
+}
+
+/* Main content */
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.available-tests h2 {
     text-align: center;
-    padding: 14px 20px;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f8f9fa;
+}
+
+td a.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
     text-decoration: none;
 }
 
-nav ul li a:hover {
-    background-color: #4CAF50;
+td a.btn:hover {
+    background-color: #0056b3;
 }
 
-main {
-    padding: 20px;
-}
-
-.welcome-section, .upcoming-tests, .recent-grades, .test-history {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-    margin-top: 0;
-}
-
+/* Footer */
 footer {
-    background-color: #333;
-    color: white;
     text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    width: 100%;
+    padding: 15px;
+    background-color: #f8f9fa;
+    position: relative;
     bottom: 0;
+    width: 100%;
 }

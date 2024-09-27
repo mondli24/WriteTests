@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Take Test</title>
+    <link rel="stylesheet" th:href="@{/css/take-test.css}">
+</head>
+<body>
+<h2 th:text="'Test: ' + ${test.testName}"></h2>
+<form action="#" method="POST" th:action="@{/submitTest}" th:object="${test}">
+    <div id="timer" style="font-size: 20px; text-align: center; margin-bottom: 20px;"></div>
+    <input type="hidden" name="testId" th:value="${test.id}" />
+    <input type="hidden" name="studentId" th:value="${student.id}">
+    <div th:each="question, questionStat : ${test.questions}">
+        <h4 th:text="'Question ' + (${questionStat.index} + 1) + ': ' + ${question.questionText}"></h4>
+
+        <!-- Multiple-Choice Questions -->
+        <div th:if="${question.questionType} == 'MULTIPLE_CHOICE'">
+            <ul>
+                <li th:each="answer, answerStat : ${question.answers}">
+                    <input type="radio" th:name="'question_' + ${question.questionId}" th:value="${answer.id}">
+                    <span th:text="${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(answerStat.index)} + '. ' + ${answer.answerText}"></span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- True/False Questions -->
+        <div th:if="${question.questionType} == 'TRUE_FALSE'">
+            <input type="radio" th:name="'question_' + ${question.questionId}" value="true"> True<br>
+            <input type="radio" th:name="'question_' + ${question.questionId}" value="false"> False<br>
+        </div>
+    </div>
+    <button type="submit">Submit Test</button>
+</form>
+
+
+<script th:inline="javascript">
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        var duration = /*[[${test.duration}]]*/ 'defaultDuration'; // Duration from the server, ensure it's in seconds
+        var display = document.getElementById('timer');
+        startTimer(duration, display);
+    });
+
+    function startTimer(duration, display) {
+        var timer = duration, hours, minutes, seconds;
+        var interval = setInterval(function () {
+            hours = parseInt(timer / 3600, 10);
+            minutes = parseInt((timer % 3600) / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = hours + ":" + minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(interval);
+                document.querySelector('form').submit(); // Auto-submit the form when the timer is done
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>

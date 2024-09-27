@@ -1,8 +1,10 @@
 package com.mondlimqanya.WriteTests.controller;
 
 import com.mondlimqanya.WriteTests.entity.Lecturer;
+import com.mondlimqanya.WriteTests.entity.Test;
 import com.mondlimqanya.WriteTests.service.StudentService;
 import com.mondlimqanya.WriteTests.service.LecturerService;
+import com.mondlimqanya.WriteTests.service.TestService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
+
 @Controller
 public class LecturerController {
 
@@ -22,6 +26,9 @@ public class LecturerController {
     @Autowired
     private LecturerService lecturerService;
     private StudentService studentService;
+
+    @Autowired
+    private TestService testService;
 
     @GetMapping("/")
     public String redirectToLogin() {
@@ -67,7 +74,6 @@ public class LecturerController {
                                 Model model,
                                 HttpSession session) {
         System.out.println("Email Address: " + emailAddress);  // Debugging
-        System.out.println("Password: " + password);  // Debugging
 
         Lecturer existingLecturer = lecturerService.findLecturerByEmail(emailAddress);
         System.out.println("Existing lecturer: " + existingLecturer);  // Debugging
@@ -77,16 +83,20 @@ public class LecturerController {
             return "login";
         }
 
-        if (!existingLecturer.getPassword().equals(password)) {
+        // Use the authenticateLecturer method to verify the password
+        if (!lecturerService.authenticateLecturer(emailAddress, password)) {
             model.addAttribute("error", "Invalid password");
             return "login";
         }
 
-        // Set the lecturer's email in the session
-        session.setAttribute("lecturerEmail", emailAddress);
+        // Store the lecturer's ID and email in the session
+        session.setAttribute("lecturerId", existingLecturer.getLecturerId());
+        session.setAttribute("lecturerEmail", emailAddress);  // Store lecturerEmail as well
 
         return "redirect:/dashboard";
     }
+
+
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
@@ -103,7 +113,20 @@ public class LecturerController {
     public String logout(HttpSession session) {
         // Invalidate the session to log out the lecturer
         session.invalidate();
-        return "redirect:/login"; // Redirect to the login page
+        return "login"; // Redirect to the login page
+    }
+
+    @GetMapping("/my-tests")
+    public String viewMyTests(Model model, HttpSession session) {
+        String lecturerEmail = (String) session.getAttribute("lecturerEmail");
+        if (lecturerEmail == null) {
+            return "redirect:/login"; // Redirect to login if not logged in
+        }
+
+        List<Test> tests = testService.findTestsByLecturerEmail(lecturerEmail);
+        model.addAttribute("tests", tests);
+
+        return "my-tests"; // The name of your Thymeleaf template
     }
 
 }

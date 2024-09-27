@@ -41,6 +41,10 @@ public class Lecturer {
     @Transient // Not stored in the database
     private String confirm_password;
 
+    @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL)
+    private List<Course> courses = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests = new ArrayList<>();
     // Constructors

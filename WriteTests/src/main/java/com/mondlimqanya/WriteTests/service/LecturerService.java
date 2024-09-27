@@ -4,12 +4,16 @@ import com.mondlimqanya.WriteTests.entity.Lecturer;
 import com.mondlimqanya.WriteTests.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class LecturerService {
+    public Lecturer findById(Long id) {
+        return lecturerRepository.findById(id)
+                .orElse(null); // Return null if not found or handle as needed
+    }
     private final LecturerRepository lecturerRepository;
 
     // HashMap to store lecturer credentials (for demonstration purposes)
@@ -25,6 +29,8 @@ public class LecturerService {
 
     public void saveLecturer(Lecturer lecturer) {
         // Save lecturer in the repository and update the map
+        String hashedPassword = BCrypt.hashpw(lecturer.getPassword(), BCrypt.gensalt());
+        lecturer.setPassword(hashedPassword);
         Lecturer savedLecturer = lecturerRepository.save(lecturer);
         lecturerCredentials.put(savedLecturer.getEmailAddress(), savedLecturer.getPassword());
     }
@@ -35,8 +41,12 @@ public class LecturerService {
 
     public boolean authenticateLecturer(String emailAddress, String password) {
         // Verify credentials from the map
-        String storedPassword = lecturerCredentials.get(emailAddress);
-        return storedPassword != null && storedPassword.equals(password);
+        Lecturer lecturer = findLecturerByEmail(emailAddress);
+        if (lecturer == null) {
+            return false; // Lecturer not found
+        }
+        return BCrypt.checkpw(password, lecturer.getPassword());
+
     }
 }
 

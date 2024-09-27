@@ -1,26 +1,61 @@
-document.querySelector('form').addEventListener('submit', function(event) {
-    // Get all checkboxes in the form
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+    if (!validateLastQuestion()) {
+    alert('Please complete the last question before submitting.');
+    event.preventDefault();
+    return;
+}
+
     const checkboxes = document.querySelectorAll('.correct-checkbox');
+    let atLeastOneChecked = false;
 
     checkboxes.forEach(checkbox => {
-        // If checkbox is unchecked, add a hidden input to send false
-        if (!checkbox.checked) {
-            const hiddenFalseInput = document.createElement('input');
-            hiddenFalseInput.type = 'hidden';
-            hiddenFalseInput.name = checkbox.name;
-            hiddenFalseInput.value = 'false';
-            checkbox.parentElement.appendChild(hiddenFalseInput);
-        } else {
-            // If checked, ensure the checkbox sends true
-            checkbox.value = 'true';
-        }
-    });
+    if (checkbox.checked) {
+    checkbox.value = 'true';
+    atLeastOneChecked = true;
+} else {
+    const hiddenFalseInput = document.createElement('input');
+    hiddenFalseInput.type = 'hidden';
+    hiddenFalseInput.name = checkbox.name;
+    hiddenFalseInput.value = 'false';
+    checkbox.parentElement.appendChild(hiddenFalseInput);
+}
 });
 
-// Function to add a new question dynamically
-function addQuestion() {
+    if (!atLeastOneChecked) {
+    alert("At least one correct answer must be selected.");
+    event.preventDefault();
+}
+});
+
+    // Validation function to ensure all inputs are filled and at least one correct answer is selected
+    function validateLastQuestion() {
+    const questions = document.querySelectorAll('.question-item');
+    if (questions.length === 0) return true;
+
+    const lastQuestion = questions[questions.length - 1];
+    const inputs = lastQuestion.querySelectorAll('input[type="text"], select');
+    for (let input of inputs) {
+    if (!input.value) return false;
+}
+
+    const correctCheckboxes = lastQuestion.querySelectorAll('input[type="checkbox"]');
+    let isChecked = false;
+    correctCheckboxes.forEach((checkbox) => {
+    if (checkbox.checked) isChecked = true;
+});
+
+    return isChecked;
+}
+
+    function addQuestion() {
     const container = document.getElementById('questions-container');
-    const questionCount = container.children.length; // Keeps track of question index
+    if (!validateLastQuestion()) {
+    alert('Please complete the last question before adding a new one.');
+    return;
+}
+
+    const questionCount = container.children.length;
 
     const questionHtml = `
         <div class="question-item">
@@ -32,7 +67,6 @@ function addQuestion() {
                 <option value="TRUE_FALSE">True/False</option>
             </select>
             <div class="answers-container" id="answers-container-${questionCount}">
-                <!-- Dynamic answers will be added here -->
             </div>
             <button type="button" onclick="addAnswer(${questionCount})">Add Answer</button>
         </div>
@@ -40,14 +74,12 @@ function addQuestion() {
     container.insertAdjacentHTML('beforeend', questionHtml);
 }
 
-// Function to toggle between multiple choice and true/false answers
-function toggleAnswerType(selectElement, questionIndex) {
+    function toggleAnswerType(selectElement, questionIndex) {
     const answerContainer = document.getElementById(`answers-container-${questionIndex}`);
-    answerContainer.innerHTML = ''; // Clear existing answers
+    answerContainer.innerHTML = '';
 
     if (selectElement.value === 'TRUE_FALSE') {
-        // Add true/false options
-        const trueFalseHtml = `
+    const trueFalseHtml = `
             <div>
                 <label>True</label>
                 <input type="radio" name="questions[${questionIndex}].correctAnswer" value="true" required>
@@ -55,13 +87,17 @@ function toggleAnswerType(selectElement, questionIndex) {
                 <input type="radio" name="questions[${questionIndex}].correctAnswer" value="false" required>
             </div>
         `;
-        answerContainer.insertAdjacentHTML('beforeend', trueFalseHtml);
-    }
+    answerContainer.insertAdjacentHTML('beforeend', trueFalseHtml);
+}
 }
 
-// Function to add a new answer for multiple choice questions
-function addAnswer(questionIndex) {
+    function addAnswer(questionIndex) {
     const container = document.getElementById(`answers-container-${questionIndex}`);
+    if (!validateLastAnswer(container)) {
+    alert('Please enter text for the last answer before adding a new one.');
+    return;
+}
+
     const answerCount = container.children.length;
 
     const answerHtml = `
@@ -69,10 +105,18 @@ function addAnswer(questionIndex) {
         <label>Answer:</label>
         <input type="text" name="questions[${questionIndex}].answers[${answerCount}].answerText" required>
         <label>Correct:</label>
-        <input type="checkbox" name="questions[${questionIndex}].answers[${answerCount}].isCorrect" value="true">
-        <!-- Add a hidden field for unchecked checkboxes -->
+        <input type="checkbox" name="questions[${questionIndex}].answers[${answerCount}].isCorrect" class="correct-checkbox" value="true">
         <input type="hidden" name="questions[${questionIndex}].answers[${answerCount}].isCorrect" value="false">
     </div>
     `;
     container.insertAdjacentHTML('beforeend', answerHtml);
+}
+
+    function validateLastAnswer(container) {
+    const answers = container.querySelectorAll('.answer-item');
+    if (answers.length === 0) return true;
+
+    const lastAnswer = answers[answers.length - 1];
+    const input = lastAnswer.querySelector('input[type="text"]');
+    return input.value !== '';
 }

@@ -1,7 +1,17 @@
 package com.mondlimqanya.WriteTests.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "courses")
 public class Course {
@@ -10,12 +20,27 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
+    @NotBlank(message = "Course name is required")
     private String courseName;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    private String courseDescription;
+
+    // A course is taught by one lecturer
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lecturer_id", nullable = true)
     private Lecturer lecturer;
 
+    // A course can have many tests
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Test> tests = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private Set<Student> students = new HashSet<>();
     // Constructors
     public Course() {}
 
@@ -24,28 +49,15 @@ public class Course {
         this.lecturer = lecturer;
     }
 
-    // Getters and Setters
-    public Long getCourseId() {
-        return courseId;
+    // Custom method to add a test to a course
+    public void addTest(Test test) {
+        tests.add(test);
+        test.setCourse(this);
     }
 
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public Lecturer getUser() {
-        return lecturer;
-    }
-
-    public void setUser(Lecturer lecturer) {
-        this.lecturer = lecturer;
+    // Custom method to remove a test from a course
+    public void removeTest(Test test) {
+        tests.remove(test);
+        test.setCourse(null);
     }
 }

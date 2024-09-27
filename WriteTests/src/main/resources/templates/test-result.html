@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Test Result</title>
+    <link rel="stylesheet" th:href="@{/css/test-result.css}"> <!-- Link to the CSS file -->
+</head>
+<body>
+<div class="test-result-container">
+    <h2 class="test-completion-status">Test Completed</h2>
+    <h2 class="test-score">Your Score: <span class="score" th:text="${score}"></span> / <span class="total" th:text="${totalQuestions}"></span></h2>
+    <form action="#" th:action="@{/review-test}" class="review-form">
+        <button type="submit" class="review-button">Review Test</button>
+    </form>
+</div>
+</body>
+</html>

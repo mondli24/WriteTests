@@ -16,7 +16,7 @@ public class Test {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long testId;
+    private Long id;
 
     private String testName;
     private Long duration;
@@ -24,13 +24,17 @@ public class Test {
     @Column(nullable = false)
     private LocalDate dateSchedule;
 
-
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "lecturer_id", nullable = false)
     private Lecturer lecturer;
+
+    // A test belongs to a course
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
     public void setDuration(Duration duration) {
         this.duration = duration.toMinutes();
