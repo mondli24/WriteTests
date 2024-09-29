@@ -48,4 +48,8 @@ public class Test {
         return lecturer != null ? lecturer.getLecturerId() : null;
     }
 
+    public int getTotalQuestions() {
+        return questions.size();
+    }
+
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Test Review</title>
+    <link rel="stylesheet" th:href="@{/css/review-test.css}">
+</head>
+<body>
+<h1 th:text="'Reviewing Test: ' + ${test.testName}"></h1>
+<p th:text="'Score: ' + ${submission.score}"></p>
+
+<ul>
+    <li th:each="answerSubmission : ${answerSubmissions}">
+        <!-- Display the question text -->
+        <p>Question: <span th:text="${answerSubmission.question.questionText}"></span></p>
+
+        <!-- Display the student's submitted answer -->
+        <p th:if="${answerSubmission.question.questionType == 'TRUE_FALSE'}">Your Answer: <span th:text="${answerSubmission.selected ? 'True' : 'False'}"></span></p>
+        <p th:if="${answerSubmission.question.questionType != 'TRUE_FALSE'}">Your Answer: <span th:text="${answerSubmission.submittedAnswer.answerText}"></span></p>
+
+        <!-- Display whether the student's answer is correct or incorrect -->
+        <p>Correct:
+            <span th:if="${answerSubmission.selected}" style="color:green;">Yes</span>
+            <span th:if="${!answerSubmission.selected}" style="color:red;">No</span>
+        </p>
+
+        <!-- If the submitted answer is incorrect, display the correct answer -->
+        <p th:if="${!answerSubmission.selected}">
+            Correct Answer:
+            <span th:each="answer : ${answerSubmission.question.answers}"
+                  th:if="${answer.isCorrect}"
+                  th:text="${answer.answerText}"></span>
+        </p>
+    </li>
+</ul>
+
+<a href="/studentDash">Back to Dashboard</a>
+</body>
+</html>

@@ -44,6 +44,10 @@ public class Lecturer {
     @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL)
     private List<Course> courses = new ArrayList<>();
 
+    // One-to-many relationship with students
+    @OneToMany(mappedBy = "lecturer")
+    private List<Student> students;
+
 
     @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests = new ArrayList<>();

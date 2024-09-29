@@ -1,15 +1,10 @@
 package com.mondlimqanya.WriteTests.controller;
 
 import com.mondlimqanya.WriteTests.entity.*;
-import com.mondlimqanya.WriteTests.repository.StudentRepository;
-import com.mondlimqanya.WriteTests.repository.TestSubmissionRepository;
 import com.mondlimqanya.WriteTests.service.*;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +14,11 @@ import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class StudentController {
@@ -35,7 +31,13 @@ public class StudentController {
     private TestSubmissionService testSubmissionService;
 
     @Autowired
+    private AnswerSubmissionService answerSubmissionService;
+
+    @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private LecturerService lecturerService;
 
     @Autowired
     private AnswerService answerService;
@@ -47,7 +49,7 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    // Student Login Form
+     //Student Login Form
     @GetMapping("/student-login")
     public String showStudentLoginForm(Model model) {
         model.addAttribute("student", new Student());
@@ -80,7 +82,7 @@ public class StudentController {
     }
 
 
-    //Student Dashboard
+//    //Student Dashboard
 //    @GetMapping("/studentDash")
 //    public String showStudentDashboard() {
 //        return "studentDash";
@@ -144,23 +146,42 @@ public class StudentController {
     }
 
     @PostMapping("/add-student")
-    public String addStudent(@ModelAttribute @Valid Student student, BindingResult result, Model model) {
+    public String addStudent(@ModelAttribute @Valid Student student, BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
-            return "add-student"; // If validation fails, return the form with error messages
+            return "add-student"; // If validation fails, return to the form with error messages
+        }
+
+        Long lecturerId = (Long) session.getAttribute("lecturerId"); // Retrieve lecturer ID from session
+        if (lecturerId == null) {
+            model.addAttribute("error", "No lecturer logged in");
+            return "redirect:/lecturer-login"; // Redirect to login page if no lecturer is found in session
+        }
+
+        Lecturer lecturer = lecturerService.findById(lecturerId);
+        if (lecturer == null) {
+            model.addAttribute("error", "Lecturer not found.");
+            return "add-student"; // Return to the add student form with an error message
         }
 
         // Check if the student email already exists
         if (studentService.findStudentByEmail(student.getEmailAddress()) != null) {
             model.addAttribute("error", "Email already exists");
-            return "add-student";
+            return "add-student"; // Return to the form if email exists
         }
 
-        // Set the default password and save the student
+        // Set the lecturer of the student
+        student.setLecturer(lecturer);
+
+        // Set the default password (Consider using encrypted passwords)
         student.setPassword("46579");
         studentService.saveStudent(student);
 
-        return "redirect:/dashboard"; // Redirect to the dashboard or a success page
+        model.addAttribute("success", "Student added successfully!");
+
+        // Redirect to a relevant page, maybe list of students or dashboard
+        return "redirect:/dashboard";
     }
+
 
     @GetMapping("/sign_out")
     public String logout(HttpSession session) {
@@ -200,48 +221,97 @@ public class StudentController {
     @PostMapping("/submitTest")
     public String submitTest(@RequestParam Map<String, String> params, HttpSession session, Model model) {
         try {
-            String testIdStr = params.get("testId");
-            String studentIdStr = params.get("studentId");
-            params.forEach((key, value) -> System.out.println(key + ": " + value));
-            // Validate that testIdStr and studentIdStr are numeric before parsing
-            if (testIdStr == null || !testIdStr.matches("\\d+")) {
-                throw new IllegalArgumentException("Invalid Test ID");
-            }
-            if (studentIdStr == null || !studentIdStr.matches("\\d+")) {
-                throw new IllegalArgumentException("Invalid Student ID");
-            }
-
-            Long testId = Long.parseLong(testIdStr);
-            Long studentId = Long.parseLong(studentIdStr);
+            Long testId = Long.parseLong(params.get("testId"));
+            Long studentId = Long.parseLong(params.get("studentId"));
 
             Test test = testService.findById(testId);
             Student student = studentService.findById(studentId);
 
-            int score = 0;
-            System.out.println("Total questions: " + test.getQuestions().size());
+            TestSubmission testSubmission = new TestSubmission(student, test, 0);
+            List<AnswerSubmission> answerSubmissions = new ArrayList<>();
+
             for (Question question : test.getQuestions()) {
-                System.out.println("Processing question ID: " + question.getQuestionId());
-                String submittedAnswerId = params.get("question_" + question.getQuestionId());
-                if (submittedAnswerId != null && submittedAnswerId.matches("\\d+")) {
-                    Long answerId = Long.parseLong(submittedAnswerId);
+                String submittedAnswerValue = params.get("question_" + question.getQuestionId());
+                AnswerSubmission answerSubmission = new AnswerSubmission();
+                answerSubmission.setTestSubmission(testSubmission);
+                answerSubmission.setQuestion(question);
+
+                if (question.getQuestionType().equals("TRUE_FALSE")) {
+                    // Handle True/False question
+                    boolean selectedAnswer = Boolean.parseBoolean(submittedAnswerValue);
+                    answerSubmission.setSelected(selectedAnswer);
+
+                    // Check if the selected answer matches the correct answer
+                    Answer correctAnswer = question.getAnswers().stream()
+                            .filter(Answer::getIsCorrect)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (correctAnswer != null && (selectedAnswer == correctAnswer.getIsCorrect())) {
+                        testSubmission.setScore(testSubmission.getScore() + 1);
+                    }
+                } else {
+                    // Handle Multiple Choice question
+                    Long answerId = Long.parseLong(submittedAnswerValue);
                     Answer submittedAnswer = answerService.findAnswerById(answerId);
-                    if (submittedAnswer != null && submittedAnswer.getIsCorrect()) {
-                        score += 1;  // Each correct answer increments the score by 1
+                    answerSubmission.setSubmittedAnswer(submittedAnswer);
+                    answerSubmission.setSelected(submittedAnswer.getIsCorrect());
+
+                    if (submittedAnswer.getIsCorrect()) {
+                        testSubmission.setScore(testSubmission.getScore() + 1);
                     }
                 }
+                answerSubmissions.add(answerSubmission);
             }
 
-            TestSubmission testSubmission = new TestSubmission(student, test, score);
+            testSubmission.setAnswerSubmissions(answerSubmissions);
             testSubmissionService.save(testSubmission);
 
-            model.addAttribute("score", score);
-            return "test-result";  // Redirect to a result page showing the score
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return "errorPage";  // Redirect to an error handling page or show an error message
+            model.addAttribute("score", testSubmission.getScore());
+            model.addAttribute("totalQuestions", test.getQuestions().size());
+            model.addAttribute("testId", test.getId());
+            return "test-result";  // Redirect to the test result page
+        } catch (NumberFormatException e) {
+            model.addAttribute("error", "Invalid number format for test or student ID.");
+            return "errorPage";
+        } catch (Exception e) {
+            model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
+            return "errorPage";
         }
     }
 
+
+
+    @GetMapping("/reviewTest/{testId}")
+    public String reviewTest(@PathVariable Long testId, HttpSession session, Model model) {
+        Long studentId = (Long) session.getAttribute("studentId");
+
+        // Check if the student is logged in
+        if (studentId == null) {
+            return "redirect:/student-login"; // Redirect to login if no session exists
+        }
+
+        // Fetch all TestSubmissions for the given student and test
+        List<TestSubmission> submissions = testSubmissionService.findAllByTestIdAndStudentId(testId, studentId);
+        if (submissions.isEmpty()) {
+            model.addAttribute("error", "No test submissions found for the given test and student.");
+            return "errorPage";
+        }
+
+        // For example, use the most recent submission if multiple exist
+        TestSubmission latestSubmission = submissions.get(submissions.size() - 1);
+
+        // Fetch the associated AnswerSubmissions for the test submission
+        List<AnswerSubmission> answerSubmissions = answerSubmissionService.findByTestSubmissionId(latestSubmission.getId());
+
+        // Add necessary attributes to the model for the view
+        model.addAttribute("submission", latestSubmission);
+        model.addAttribute("test", latestSubmission.getTest());
+        model.addAttribute("answerSubmissions", answerSubmissions);
+
+        // Render the reviewTest view
+        return "reviewTest";
+    }
 
 
 

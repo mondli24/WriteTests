@@ -24,6 +24,7 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
+
 //    private Boolean correctAnswer;  // For True/False only
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

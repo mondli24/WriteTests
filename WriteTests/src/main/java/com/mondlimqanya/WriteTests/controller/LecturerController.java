@@ -32,7 +32,7 @@ public class LecturerController {
 
     @GetMapping("/")
     public String redirectToLogin() {
-        return "redirect:/login";
+        return "redirect:/index";
     }
 
 
@@ -67,6 +67,12 @@ public class LecturerController {
         model.addAttribute("lecturer", new Lecturer());
         return "login";
     }
+
+    @GetMapping("/index")
+    public String showIndexForm() {
+        return "index";  // Returns the index.html template
+    }
+
 
     @PostMapping("/login")
     public String loginLecturer(@RequestParam("emailAddress") String emailAddress,

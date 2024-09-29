@@ -28,9 +28,12 @@
             <input type="radio" th:name="'question_' + ${question.questionId}" value="true"> True<br>
             <input type="radio" th:name="'question_' + ${question.questionId}" value="false"> False<br>
         </div>
+
+
     </div>
     <button type="submit">Submit Test</button>
 </form>
+
 
 
 <script th:inline="javascript">
@@ -61,6 +64,24 @@
             }
         }, 1000);
     }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const allTFQuestions = document.querySelectorAll('div[th\\:if="${question.questionType} == \'TRUE_FALSE\'"]');
+        let allAnswered = true;
+        allTFQuestions.forEach(question => {
+            const radios = question.querySelectorAll('input[type="radio"]');
+            const isAnswered = Array.from(radios).some(radio => radio.checked);
+            if (!isAnswered) {
+                allAnswered = false;
+            }
+        });
+
+        if (!allAnswered) {
+            alert('Please answer all True/False questions.');
+            event.preventDefault();
+        }
+    });
+
 </script>
 </body>
 </html>

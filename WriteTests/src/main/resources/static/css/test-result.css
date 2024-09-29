@@ -32,16 +32,14 @@ body {
 }
 
 .review-button {
-    background-color: #007BFF; /* Bootstrap's primary color */
+    padding: 10px 15px;
+    background-color: #4CAF50;  /* Green background */
     color: white;
     border: none;
-    padding: 10px 20px;
-    cursor: pointer;
     border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    cursor: pointer;
 }
 
 .review-button:hover {
-    background-color: #0056b3;
+    background-color: #45a049;  /* Darker green on hover */
 }

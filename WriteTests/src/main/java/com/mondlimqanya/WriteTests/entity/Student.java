@@ -55,6 +55,10 @@ public class Student {
     @ManyToMany(mappedBy = "students")
     private Set<Course> courses = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "lecturer_id", nullable = false)
+    private Lecturer lecturer;
+
     // Constructors
     public Student() {}
 

@@ -1,6 +1,8 @@
 package com.mondlimqanya.WriteTests.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 @Getter
@@ -13,7 +15,9 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Answer text must not be blank")
     private String answerText;
+    @NotNull(message = "Correctness must be specified")
     private Boolean isCorrect;
 
     @ManyToOne
