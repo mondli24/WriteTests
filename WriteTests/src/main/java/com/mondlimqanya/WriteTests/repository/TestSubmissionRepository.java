@@ -1,5 +1,6 @@
 package com.mondlimqanya.WriteTests.repository;
 
+import com.mondlimqanya.WriteTests.entity.Test;
 import com.mondlimqanya.WriteTests.entity.TestSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,11 @@ import java.util.List;
 
 @Repository
 public interface TestSubmissionRepository extends JpaRepository<TestSubmission, Long> {
+
+    List<TestSubmission> findAllByStudentId(Long studentId);
+
+    @Query("SELECT t FROM Test t WHERE t.id NOT IN (SELECT ts.test.id FROM TestSubmission ts WHERE ts.student.id = :studentId AND ts.submitted = true)")
+    List<Test> findAvailableTestsForStudent(@Param("studentId") Long studentId);
 
     /**
      * Finds all TestSubmission records by testId and studentId.

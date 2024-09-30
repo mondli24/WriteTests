@@ -206,17 +206,17 @@ public class StudentController {
         return "takeTest"; // Thymeleaf template name
     }
 
-    @GetMapping("/all-tests")
-    public String listAllTests(Model model, HttpSession session) {
-        Long studentId = (Long) session.getAttribute("studentId"); // Assuming you store studentId in session
-        if (studentId == null) {
-            return "redirect:/student-login"; // Redirect to login if not logged in
-        }
-
-        List<Test> tests = testService.findAllTests(); // Fetch all tests
-        model.addAttribute("tests", tests); // Add tests to the model
-        return "student/allTests"; // Return the view name for displaying all tests
-    }
+//    @GetMapping("/all-tests")
+//    public String listAllTests(Model model, HttpSession session) {
+//        Long studentId = (Long) session.getAttribute("studentId"); // Assuming you store studentId in session
+//        if (studentId == null) {
+//            return "redirect:/student-login"; // Redirect to login if not logged in
+//        }
+//
+//        List<Test> tests = testService.findAllTests(); // Fetch all tests
+//        model.addAttribute("tests", tests); // Add tests to the model
+//        return "student/allTests"; // Return the view name for displaying all tests
+//    }
 
     @PostMapping("/submitTest")
     public String submitTest(@RequestParam Map<String, String> params, HttpSession session, Model model) {
@@ -311,6 +311,27 @@ public class StudentController {
 
         // Render the reviewTest view
         return "reviewTest";
+    }
+
+    @GetMapping("/available-tests")
+    public String showAvailableTests(Model model, HttpSession session) {
+        Long studentId = (Long) session.getAttribute("studentId");
+        if (studentId == null) {
+            return "redirect:/login"; // Redirect to login if not logged in
+        }
+
+        try {
+            List<Test> availableTests = testService.getAvailableTestsForStudent(studentId);
+            List<Long> submittedTestIds = testService.getSubmittedTestIdsByStudent(studentId);
+
+            model.addAttribute("tests", availableTests);
+            model.addAttribute("submittedTestIds", submittedTestIds);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", "Error retrieving tests: " + e.getMessage());
+            // Optionally, you could redirect to an error page or log this error
+        }
+
+        return "available-tests"; // Name of the Thymeleaf template
     }
 
 

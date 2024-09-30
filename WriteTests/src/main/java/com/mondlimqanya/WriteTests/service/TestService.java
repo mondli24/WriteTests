@@ -11,12 +11,19 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TestService {
 
     @Autowired
     private TestRepository testRepository;
+
+    @Autowired
+    private TestSubmissionRepository testSubmissionRepository;
+
+    @Autowired
+    private  StudentRepository studentRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -122,4 +129,32 @@ public class TestService {
     public List<Test> findAllTests() {
         return testRepository.findAll();
     }
+    // In TestService.java
+//    public List<Test> getTestsForStudent(Long studentId) {
+//        Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
+//        return testRepository.findTestsByLecturerId(student.getLecturer().getLecturerId());
+//    }
+
+//    public List<Test> getAvailableTestsForStudent(Long studentId) {
+//        Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
+//        return testRepository.findTestsForStudent(student.getLecturer().getLecturerId(), studentId);
+//    }
+
+    public List<Test> getAvailableTestsForStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
+        Long lecturerId = student.getLecturer().getLecturerId();
+        return testRepository.findAvailableTestsByLecturerAndStudent(lecturerId, studentId);
+    }
+
+    public List<Long> getSubmittedTestIdsByStudent(Long studentId) {
+        // This would fetch all test submissions by the student and extract the test IDs
+        return testSubmissionRepository.findAllByStudentId(studentId)
+                .stream()
+                .map(TestSubmission::getTest)
+                .map(Test::getId)
+                .collect(Collectors.toList());
+    }
+
+
 }

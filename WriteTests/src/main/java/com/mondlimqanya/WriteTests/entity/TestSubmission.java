@@ -32,6 +32,9 @@ public class TestSubmission {
     @OneToMany(mappedBy = "testSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerSubmission> answerSubmissions;
 
+    @Column(name = "submitted")
+    private boolean submitted;
+
     // Constructors, Getters, and Setters
 
     // Default constructor if not already present

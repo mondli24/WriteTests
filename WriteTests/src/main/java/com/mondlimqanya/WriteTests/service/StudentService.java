@@ -42,4 +42,6 @@ public class StudentService {
         student.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
         studentRepository.save(student);
     }
+
+
 }

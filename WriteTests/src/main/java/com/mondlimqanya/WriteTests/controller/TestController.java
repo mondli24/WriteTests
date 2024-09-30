@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/tests")
 public class TestController {
@@ -49,6 +51,8 @@ public class TestController {
         session.invalidate();
         return "redirect:/login"; // Redirect to the login page
     }
+
+
 
 
 }

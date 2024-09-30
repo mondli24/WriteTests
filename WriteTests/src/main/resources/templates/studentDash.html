@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,35 +14,18 @@
 
 <nav>
     <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#" class="btn">Take Test</a></li>
-        <li><a href="#">My Results</a></li>
+        <li><a  th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/available-tests}">My Tests</a></li>
     </ul>
 </nav>
 
 <main>
-    <section class="all-tests">
-        <h2>Available Tests</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Test Name</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="test : ${tests}">
-                <td th:text="${test.testName}"></td>
-                <td>
-                    <a th:href="@{/take-test/{id}(id=${test.id})}" class="btn">Take</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
+
 </main>
 <footer>
     <p>Help | Contact</p>
 </footer>
+
+
 </body>
 </html>

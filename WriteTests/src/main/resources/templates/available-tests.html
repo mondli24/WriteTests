@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Tests</title>
+    <link rel="stylesheet" th:href="@{/css/available-tests.css}"> <!-- Link to your CSS for styling -->
+</head>
+<body>
+<main>
+    <section class="all-tests">
+        <h2>Available Tests</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Test Name</th>
+                <th>Date Scheduled</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="test : ${tests}" th:id="'test-' + ${test.id}">
+                <td th:text="${test.testName}">Test Name Placeholder</td>
+                <td th:text="${test.dateSchedule}">Date Placeholder</td>
+                <td>
+                    <!-- Check if the test has already been submitted -->
+                    <span th:if="${#lists.contains(submittedTestIds, test.id)}">
+                            <button class="btn-disabled" disabled>Already Taken</button>
+                        </span>
+                    <span th:if="${!#lists.contains(submittedTestIds, test.id)}">
+                            <a th:href="@{'/take-test/' + ${test.id}}" class="btn">Take</a>
+                        </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        const submittedTests = /*[[${submittedTestIds}]]*/ [];
+        submittedTests.forEach(testId => {
+            const testElement = document.getElementById(`test-${testId}`);
+            if (testElement) {
+                testElement.style.display = 'none';
+            }
+        });
+    });
+    /*]]>*/
+</script>
+<!-- Optionally include any JavaScript needed -->
+</body>
+</html>
